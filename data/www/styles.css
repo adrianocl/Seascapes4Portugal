@@ -1,0 +1,36 @@
+/* increase play and pause button size */
+.glyphicon-play, .glyphicon-pause {
+    font-size: 25px;
+}
+
+/* reduce selSanctuary size */
+
+/*.selectize-dropdown { 
+  line-height: 10px;
+}
+*/
+
+/*
+.selectize-input {
+  min-height: 0;
+  padding: 0px;
+  padding-bottom: 0 !important;
+}
+*/
+
+.selectize-control {
+  margin-bottom: 0 !important;
+}
+
+.form-group {
+  margin-bottom: 0 !important;
+}
+
+/* dygraph in dark mode */
+.dygraph-axis-label {
+  color: #B9BEC2;
+}
+
+.dygraph-legend {
+  background-color: #272B30 !important;
+}
