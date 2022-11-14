@@ -1,0 +1,14 @@
+name: Seascapes4Portugal
+title: Seascapes4Portugal
+username:
+account: ntavigneto
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 7576117
+bundleId: 6499372
+url: https://ntavigneto.shinyapps.io/Seascapes4Portugal/
+when: 1668100665.76892
+lastSyncTime: 1668100665.76894
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: .RData|grd|ply|www
