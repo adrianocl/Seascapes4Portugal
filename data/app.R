@@ -46,9 +46,7 @@ library(httr)
 # TODO:
 # - download grids (*.tif), time series (*.csv)
 
-sanctuaries           <- nms
-
-
+sanctuaries           <- list()#nms
 
 sanctuaries$mpa_azores <- "Parque Marinho dos Açores"
 
@@ -85,12 +83,12 @@ sanctuaries$zee_continente <- "ZEE Continente"
 sanctuaries$zee_azores     <- "ZEE Açores"
 sanctuaries$zee_madeira    <- "ZEE Madeira"
 
-sanctuaries <- sanctuaries[-c(1:14)]
+#sanctuaries <- sanctuaries[-c(1:14)]
 
 sanctuaries           <- setNames(
   names(sanctuaries), sanctuaries)
 
-dir_data <- 'https://raw.githubusercontent.com/adrianocl/Seascapes4Portugal/main/data'
+dir_data <- 'https://raw.githubusercontent.com/adrianocl/MPA-MSI/main/data'
 dir_ply  <- glue("{dir_data}/ply")
 dir_grd  <- glue("{dir_data}/grd")
 
@@ -188,7 +186,7 @@ dark <- bs_theme(
 ui <- fluidPage(
   theme = dark,
   tags$head(
-    tags$link(rel = "stylesheet", type = "text/css", href = "https://raw.githubusercontent.com/adrianocl/Seascapes4Portugal/main/data/www/styles.css")),
+    tags$link(rel = "stylesheet", type = "text/css", href = "https://raw.githubusercontent.com/adrianocl/MPA-MSI/main/data/www/styles.css")),
   div(
     class = "custom-control custom-switch float-right", 
     tags$input(
@@ -199,7 +197,7 @@ ui <- fluidPage(
   div(
     class = "float-right", 
     #a(href = "classes.html", "Classes", target="_blank"),
-    a(href = "https://raw.githack.com/adrianocl/Seascapes4Portugal/main/data/www/classes.html", "Classes", target="_blank"),
+    a(href = "https://raw.githack.com/adrianocl/MPA-MSI/main/data/www/classes.html", "Classes", target="_blank"),
     HTML("&nbsp;&nbsp;"),
     actionLink("lnkAbout", HTML("About&nbsp;&nbsp;"))
     ),
@@ -220,14 +218,14 @@ ui <- fluidPage(
           "",
           sanctuaries)),
       leafletOutput("map", width = "100%", height = 700),#350),
-      fluidRow(
-        column(
-          12,
-          "Download Sanctuary files:", 
-          downloadLink("dlTif", "grid (.tif)"), ", ",
-          downloadLink("dlZip", "all grids (.zip)"),  ", ",
-          downloadLink("dlCsv", "timeseries (.csv)"))
-          ),
+    #  fluidRow(
+    #     column(
+    #      12,
+    #      "Download Sanctuary files:", 
+    #      downloadLink("dlTif", "grid (.tif)"), ", ",
+    #      downloadLink("dlZip", "all grids (.zip)"),  ", ",
+    #      downloadLink("dlCsv", "timeseries (.csv)"))
+    #      ),
       sliderInput(
         "selDate", 
         "",
@@ -293,10 +291,22 @@ server <- function(input, output, session) {
     
     suppressWarnings({
       m <- leaflet() %>%
-        addProviderTiles(
-          providers$Esri.WorldPhysical,
+      #  addProviderTiles(
+      #    #providers$Esri.WorldPhysical,
+      #    providers
+      #    options = providerTileOptions(
+      #      opacity = 0.6)) %>%
+         addProviderTiles(
+          "Esri.OceanBasemap",
           options = providerTileOptions(
-            opacity = 0.6)) %>%
+            variant = "Ocean/World_Ocean_Base",
+            opacity = 0.6)) %>%        
+        # add reference: placename labels and borders
+        addProviderTiles(
+          "Esri.OceanBasemap",
+          options = providerTileOptions(
+            variant = "Ocean/World_Ocean_Reference",
+            opacity = 0.6)) %>%   
         addRasterImage(
           grd,
           project = T, method = "ngb",
@@ -313,14 +323,14 @@ server <- function(input, output, session) {
           data        = ply,
           color       = "blue",
           fillOpacity = 0,
-          group = "Sanctuary") %>% 
+          group = "AMP") %>% 
         addLayersControl(
           position = "topleft",
-          overlayGroups = c("Class", "Sanctuary")) %>% 
+          overlayGroups = c("Class", "AMP")) %>% 
         addControl(
           position = "bottomright",
           layerId  = "date",
-          html     = date_beg) %>% 
+          html     = date_end) %>% 
         addMiniMap(
           position = "bottomleft",
           width    = 100,
@@ -331,6 +341,10 @@ server <- function(input, output, session) {
     m
   })
   
+
+
+
+
   observe({
     proxy <- leafletProxy("map")
    
@@ -422,7 +436,7 @@ server <- function(input, output, session) {
           labelLoc = "bottom",
           color    = "white") %>%
         #dyCSS("www/styles.css")
-        dyCSS("https://raw.githubusercontent.com/adrianocl/Seascapes4Portugal/main/data/www/styles.css")
+        dyCSS("https://raw.githubusercontent.com/adrianocl/MPA-MSI/main/data/www/styles.css")
     } else {
       g <- g  %>%
         dyEvent(
@@ -447,7 +461,8 @@ server <- function(input, output, session) {
     showModal(modalDialog(
       tags$head(
         tags$script(src="https://kit.fontawesome.com/fe79a3e7cf.js", crossorigin="anonymous")),
-      h3(HTML("About<img src='logo.svg' align='right' height=100>")),
+      h3(HTML("About
+              ")),
       readLines("about.md") %>% markdown(), 
       easyClose = TRUE,
       size = "l") # , footer = NULL
